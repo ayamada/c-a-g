@@ -1,6 +1,6 @@
 Options +ExecCGI
 
-<Files ~ "^g$">
+<Files ~ "^d$">
   SetHandler cgi-script
   ErrorDocument 500 "http://www.google.com/search"
 </Files>
