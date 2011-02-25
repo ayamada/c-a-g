@@ -1,4 +1,4 @@
-#!/usr/local/gauche/bin/speedygosh
+#!/usr/local/gauche/bin/speedygosh --timeout=3600
 ;#!/usr/local/gauche/bin/gosh
 
 (define-module c-a-g.cgi
