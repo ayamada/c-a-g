@@ -18,15 +18,15 @@
 
 (define *cmd-proc-table*
   (make-hash-table 'equal?))
-(define *cmd-desc-table*
-  (make-hash-table 'equal?))
+(define *cmd-desc-table* '())
 (define-macro (define-cmd defines desc . bodies)
   (let ((cmd (car defines))
         (args (cdr defines)))
     `(begin
        (hash-table-put! *cmd-proc-table* ,(x->string cmd) (lambda ,args
                                                             ,@bodies))
-       (hash-table-put! *cmd-desc-table* ,(x->string cmd) ,desc)
+       (set! *cmd-desc-table* (cons (cons ,(x->string cmd) ,desc)
+                                    *cmd-desc-table*))
        )))
 
 (define (main args)
@@ -63,8 +63,27 @@
         (html:title "C-A-G")
         )
       (html:body
-        ;; TODO: コマンド定義マクロに説明文を含めるようにし、そこから抽出
-        "atode"))))
+        (html:div (html:a :href (self-url) "戻る"))
+        (html:hr)
+        (html:p
+          "詳細については、"
+          (html:a
+            :href "https://github.com/ayamada/c-a-g"
+            "リポジトリ")
+          "を見て下さい。")
+        (html:hr)
+        (html:div "個別コマンド一覧")
+        (html:dl
+          (map
+            (lambda (cmd+desc)
+              (list
+                (html:dt
+                  (html:tt
+                    (html-escape-string (car cmd+desc)) " (クエリ)"))
+                (html:dd
+                  (html-escape-string (cdr cmd+desc))
+                  " にクエリ送信")))
+            *cmd-desc-table*))))))
 
 
 (define (emit-content-form params)
@@ -452,7 +471,7 @@
     "&url=search-alias%3Daps&field-keywords="
     (uri-encode-string (sanitize-query query))))
 (define-cmd (j query)
-  "jwhois"
+  "jwhois.cgi"
   (string-append
     "http://sakura.tir.jp/jwhois.cgi?q="
     (uri-encode-string (sanitize-query query))))
