@@ -306,12 +306,26 @@
     (goto-url url)))
 
 (define (make-goto-url return)
+  ;(define (goto-url url)
+  ;  (return
+  ;    (cgi-header
+  ;      :pragma "no-cache"
+  ;      :cache-control "no-cache"
+  ;      :location url)))
   (define (goto-url url)
     (return
-      (cgi-header
-        :pragma "no-cache"
-        :cache-control "no-cache"
-        :location url)))
+      (list
+        (cgi-header
+          :pragma "no-cache"
+          :cache-control "no-cache"
+          :refresh #`"0; URL=,url")
+        (html:html
+          (html:head
+            (html:meta :http-equiv "Refresh"
+                       :content #`"0; URL=,url"))
+          (html:body
+            (html:div
+              (html:a :href url (html-escape-string url))))))))
   goto-url)
 
 (define (emit-content-solve params)
