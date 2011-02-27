@@ -313,6 +313,7 @@
   ;      :cache-control "no-cache"
   ;      :location url)))
   (define (goto-url url)
+    ;; http://www.teria.com/~koseki/memo/referrer/
     (return
       (list
         (cgi-header
