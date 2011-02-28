@@ -340,26 +340,36 @@
              (_ (dispatch-w-nl goto-url query))
              ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
              ;; コマンド文字列は、1〜3文字のasciiとする
-             (m (#/^([\w\%\!\@\.\:\/\*\+\-]{1,3})\s+/ query))
-             (cmd (and m (string-downcase (m 1))))
-             (query-wo-cmd (if m (m 'after) query))
+             (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,3})(?:\s+|$)/ query))
+             (cmd (and cmd-match (string-downcase (cmd-match 1))))
+             (query-wo-cmd (if cmd-match (cmd-match 'after) query))
              ;; 改行を除去する
              (query-wo-nl (regexp-replace-all #/\n|\r/ query-wo-cmd " "))
-             (_ (when (string=? "" query-wo-nl) (goto-url (self-url))))
+             ;; 末尾のwhitespaceを除去
+             (query-wo-nl/trimmed (regexp-replace #/\s+/ query-wo-nl ""))
+             (_ (when (and
+                        (not cmd)
+                        (string=? "" query-wo-nl/trimmed))
+                  (goto-url (self-url))))
              ;; コマンドを処理
-             (_ (dispatch-w-cmd goto-url cmd query-wo-nl))
+             (_ (dispatch-w-cmd goto-url cmd query-wo-nl/trimmed))
              ;; コマンドではなかったので、コマンド部を再結合
-             (query-w-cmd-wo-nl (if cmd
-                                  (string-append cmd " " query-wo-nl)
-                                  query-wo-nl))
+             (cmd+query-wo-nl/trimmed (cond
+                                        ((not cmd) query-wo-nl/trimmed)
+                                        ((equal? "" query-wo-nl/trimmed) cmd)
+                                        (else
+                                          (string-append
+                                            cmd
+                                            " "
+                                            query-wo-nl/trimmed))))
              ;; 内容がuriっぽかったら、uriとして処理を行う
-             (_ (dispatch-uri goto-url query-w-cmd-wo-nl))
+             (_ (dispatch-uri goto-url cmd+query-wo-nl/trimmed))
              )
         ;; どれにもマッチしなかった。google検索する
         (goto-url
           (append-params-to-url
             "http://www.google.com/search"
-            `(("q" ,query-w-cmd-wo-nl))))))))
+            `(("q" ,cmd+query-wo-nl/trimmed))))))))
 
 
 (define (append-params-to-url url params)
