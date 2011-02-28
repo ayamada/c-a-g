@@ -346,7 +346,7 @@
              ;; 改行を除去する
              (query-wo-nl (regexp-replace-all #/\n|\r/ query-wo-cmd " "))
              ;; 末尾のwhitespaceを除去
-             (query-wo-nl/trimmed (regexp-replace #/\s+/ query-wo-nl ""))
+             (query-wo-nl/trimmed (regexp-replace #/\s+$/ query-wo-nl ""))
              (_ (when (and
                         (not cmd)
                         (string=? "" query-wo-nl/trimmed))
