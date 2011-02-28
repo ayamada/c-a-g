@@ -312,21 +312,26 @@
   ;      :pragma "no-cache"
   ;      :cache-control "no-cache"
   ;      :location url)))
-  (define (goto-url url)
+  (define (goto-url url :optional (location #f))
     ;; http://www.teria.com/~koseki/memo/referrer/
     (return
-      (list
+      (if location
         (cgi-header
           :pragma "no-cache"
           :cache-control "no-cache"
-          :refresh #`"0; URL=,url")
-        (html:html
-          (html:head
-            (html:meta :http-equiv "Refresh"
-                       :content #`"0; URL=,url"))
-          (html:body
-            (html:div
-              (html:a :href url (html-escape-string url))))))))
+          :location url)
+        (list
+          (cgi-header
+            :pragma "no-cache"
+            :cache-control "no-cache"
+            :refresh #`"0; URL=,url")
+          (html:html
+            (html:head
+              (html:meta :http-equiv "Refresh"
+                         :content #`"0; URL=,url"))
+            (html:body
+              (html:div
+                (html:a :href url (html-escape-string url)))))))))
   goto-url)
 
 (define (emit-content-solve params)
@@ -335,7 +340,7 @@
       ;; TODO: goto-urlを直に渡すのではなく、手続きの返り値がurlか#fかで
       ;;       分岐させるようにした方がいい
       (let* ((query (cgi-get-parameter "q" params :default ""))
-             (_ (when (string=? "" query) (goto-url (self-url))))
+             (_ (when (string=? "" query) (goto-url (self-url) #t)))
              ;; まず、改行が意味を持つ分岐を先に処理
              (_ (dispatch-w-nl goto-url query))
              ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
@@ -350,7 +355,7 @@
              (_ (when (and
                         (not cmd)
                         (string=? "" query-wo-nl/trimmed))
-                  (goto-url (self-url))))
+                  (goto-url (self-url) #t)))
              ;; コマンドを処理
              (_ (dispatch-w-cmd goto-url cmd query-wo-nl/trimmed))
              ;; コマンドではなかったので、コマンド部を再結合
