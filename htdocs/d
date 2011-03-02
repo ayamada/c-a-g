@@ -257,7 +257,8 @@
   #/^(?:(?:[\w\%\-]+(?:\:[\w\%\-]+)?\@)|)/)
 (define *re:domain*
   ;; domain.name:80
-  #/^[\w\-]+(?:\.[\w\-]+)*(?:\:\d+)?/)
+  ;; localhost等、dotを含まないものについてはdomainとはみなさない事にする
+  #/^[\w\-]+(?:\.[\w\-]+)+(?:\:\d+)?/)
 (define *re:rest*
   ;; 空、もしくは /... もしくは /...#...
   ;; fragment部にマルチバイト文字を許容するかどうかは微妙
@@ -268,42 +269,45 @@
 
 (define (dispatch-uri goto-url query)
   ;; uriとみなす為の判定に必要な部分は、以下の通り
+  ;; - 文字列全体が*re:url*にマッチするなら、無条件でuri。
+  ;;   しかし、そうでないなら、以下の判定を続行
   ;; - scheme部( http:// https:// ttp:// tp:// )。なくてもokだが要補完
   ;; - userpass部( user:pass@ )。なくてもok
   ;; - domain部( host.name )。必須
   ;; - rest部( /path/to/doc.html )。なくてもok
   ;; 尚、domain部以外は必須ではないが、完全にdomain部しか存在しない場合、
   ;; それはuriでない可能性が高い為、例外的にuriではない扱いとする
-  (and-let* (
-             ;; まず、whitespaceの除去を行う
-             (query-wo-ws (regexp-replace-all #/\s/ query ""))
-             ;; 各マッチを取得する(#fが出たら終了)
-             (match-scheme (or
-                             (*re:scheme* query-wo-ws) ; schemeあり
-                             (#/^()/ query-wo-ws))) ; schemeなし
-             (match-userpass (*re:userpass* (match-scheme 'after)))
-             (match-domain (*re:domain* (match-userpass 'after)))
-             (match-rest (*re:rest* (match-domain 'after)))
-             (_ (not ; domain部しか存在しないなら、uri扱いしない
-                  (and
-                    (string=? "" (match-scheme))
-                    (string=? "" (match-rest)))))
-             (url (string-append
-                    ;; scheme
-                    (if (string=? "" (match-scheme))
-                      "http://"
-                      (string-append "http" (match-scheme 1) "://"))
-                    ;; userpass
-                    (match-userpass)
-                    ;; domain
-                    (match-domain)
-                    ;; rest
-                    (match-rest))))
-    ;; TODO: referer消し
-    ;;       - どのように実現する？
-    ;;       -- googleのリダイレクタを使う(面倒)
-    ;;       -- JavaScriptでリダイレクト(可能かどうか不明)
-    (goto-url url)))
+  (if (and-let* ((m (*re:url* query))
+                 (_ (string=? "" (m 'before)))
+                 (_ (string=? "" (m 'after))))
+        #t)
+    (goto-url query)
+    (and-let* (
+               ;; まず、whitespaceの除去を行う
+               (query-wo-ws (regexp-replace-all #/\s/ query ""))
+               ;; 各マッチを取得する(#fが出たら終了)
+               (match-scheme (or
+                               (*re:scheme* query-wo-ws) ; schemeあり
+                               (#/^()/ query-wo-ws))) ; schemeなし
+               (match-userpass (*re:userpass* (match-scheme 'after)))
+               (match-domain (*re:domain* (match-userpass 'after)))
+               (match-rest (*re:rest* (match-domain 'after)))
+               (_ (not ; domain部しか存在しないなら、uri扱いしない
+                    (and
+                      (string=? "" (match-scheme))
+                      (string=? "" (match-rest)))))
+               (url (string-append
+                      ;; scheme
+                      (if (string=? "" (match-scheme))
+                        "http://"
+                        (string-append "http" (match-scheme 1) "://"))
+                      ;; userpass
+                      (match-userpass)
+                      ;; domain
+                      (match-domain)
+                      ;; rest
+                      (match-rest))))
+      (goto-url url))))
 
 (define (make-goto-url return)
   ;(define (goto-url url)
@@ -344,8 +348,8 @@
              ;; まず、改行が意味を持つ分岐を先に処理
              (_ (dispatch-w-nl goto-url query))
              ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
-             ;; コマンド文字列は、1〜3文字のasciiとする
-             (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,3})(?:\s+|$)/ query))
+             ;; コマンド文字列は、1〜4文字のasciiとする
+             (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,4})(?:\s+|$)/ query))
              (cmd (and cmd-match (string-downcase (cmd-match 1))))
              (query-wo-cmd (if cmd-match (cmd-match 'after) query))
              ;; 改行を除去する
@@ -479,6 +483,14 @@
 
 ;;; 以下は、個々のコマンド定義
 
+(define-cmd (h query)
+  "HEAD"
+  ;; TODO: あとでHEADする機能を追加する事
+  ;; TODO: 外部に別cgiを作らず、リダイレクト無しにHEADするには、
+  ;;       もう少し拡張する必要がある
+  (string-append
+    (self-url)
+    "?q=not%20implemented"))
 (define-cmd (e query)
   "英辞郎"
   (string-append
@@ -511,8 +523,13 @@
 (define-cmd (g query)
   "gauche-refj"
   (string-append
-    ;; TODO: 部分一致や複数検索可能な別cgiを探して、そっちに飛ばした方がいい
-    ;; TODO: http://www.callcc.net/gauche/refj/
+    ;; TODO: 先にpractical-schemeで探して、なかったらcallccで探すようにしたい
+    ;;       どうやって実現する？
+    ;;       一番簡単なのは、practical-schemeをhttp-getしてみて、
+    ;;       そのlocation先が
+    ;;       http://practical-scheme.net/gauche/man/gauche-refj.html
+    ;;       かどうかを見る、という方法だが
+    ;"http://www.callcc.net/gauche/refj/estseek.cgi?order=%40size+NUMA&phrase="
     "http://practical-scheme.net/gauche/man/?l=jp&p="
     (uri-encode-string query)))
 
