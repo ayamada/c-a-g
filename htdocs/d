@@ -11,6 +11,7 @@
   (use rfc.uri)
   (use rfc.cookie)
   (use util.list)
+  (use file.util)
   (use gauche.charconv)
   (export
     ))
@@ -520,17 +521,27 @@
 ;(define-cmd (je query)
 ;  "和英"
 ;  ...)
+(define *gosh-completions-cache* #f)
+(define (gosh-completions-exists? query)
+  ;; NB この判定では不完全な時がある
+  ;;    ( .gosh_completions には書いてあるけど、refjには書いてない項目がある)
+  ;;    でも、そんな項目は、estseekで探しても、やっぱり見付からないと思うので、
+  ;;    このままでいい事にする
+  (unless *gosh-completions-cache*
+    (set! *gosh-completions-cache* (make-hash-table 'string=?))
+    (for-each
+      (lambda (line)
+        (hash-table-put! *gosh-completions-cache* line #t))
+      (file->string-list "/home/nekoie/.gosh_completions")))
+  (hash-table-get *gosh-completions-cache* query #f))
 (define-cmd (g query)
   "gauche-refj"
   (string-append
-    ;; TODO: 先にpractical-schemeで探して、なかったらcallccで探すようにしたい
-    ;;       どうやって実現する？
-    ;;       一番簡単なのは、practical-schemeをhttp-getしてみて、
-    ;;       そのlocation先が
-    ;;       http://practical-scheme.net/gauche/man/gauche-refj.html
-    ;;       かどうかを見る、という方法だが
-    ;"http://www.callcc.net/gauche/refj/estseek.cgi?order=%40size+NUMA&phrase="
-    "http://practical-scheme.net/gauche/man/?l=jp&p="
+    (if (or
+          (equal? "" query)
+          (gosh-completions-exists? query))
+      "http://practical-scheme.net/gauche/man/?l=jp&p="
+      "http://www.callcc.net/gauche/refj/estseek.cgi?order=%40size+NUMA&phrase=")
     (uri-encode-string query)))
 
 
