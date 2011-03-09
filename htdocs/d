@@ -122,7 +122,7 @@
       (html:input :type "hidden" :name "c" :value "s")
       (html:textarea :name "q" :id "post-q"
                      :rows "3" :cols "40"
-                     :onkeydown "if (event.keyCode == 13) { self.document.send.submit() }"
+                     :onkeydown "if (event.keyCode == 13) { self.document.send.submit(); return false; }"
                      (html-escape-string query))
       (html:input :type "submit" ;:name "submit"
                   :id "post-submit" :value "解決")
