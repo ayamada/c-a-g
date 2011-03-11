@@ -9,6 +9,7 @@
   (use srfi-1)
   (use srfi-13)
   (use rfc.uri)
+  (use rfc.http)
   (use rfc.cookie)
   (use util.list)
   (use file.util)
@@ -211,7 +212,7 @@
   (and-let* ((m (*re:url* str)))
     (m)))
 
-(define (dispatch-w-nl goto-url query)
+(define (dispatch-w-nl query)
   ;; 今のところ、vimircのコピペのみ対応
   ;; 対応する必要があるのは、以下のような、一行80文字までの、改行区切りの文字列
   ;; (例1:vimircのシングルモード)
@@ -233,7 +234,7 @@
       (and-let* ((_ lines)
                  (str (apply string-append lines))
                  (url (extract-url str)))
-        (goto-url url)))
+        url))
 
     (cond
       ;; queriesが複数ない場合はパスする
@@ -243,10 +244,9 @@
       ((queries->lines:vimirc-multi queries) => resolve-lines)
       (else #f))))
 
-(define (dispatch-w-cmd goto-url cmd query)
-  (and-let* ((proc (hash-table-get *cmd-proc-table* cmd #f))
-             (result (proc query)))
-    (goto-url result)))
+(define (dispatch-w-cmd cmd query)
+  (and-let* ((proc (hash-table-get *cmd-proc-table* cmd #f)))
+    (proc query)))
 
 (define *re:scheme*
   ;; http:// ttp:// tp://
@@ -268,7 +268,7 @@
 (define *re:url*
   #/https?\:\/\/[\!\#\$\%\&\'\(\)\*\+\,\-\.\/0-9\:\;\=\?\@A-Z\_a-z\~]+/)
 
-(define (dispatch-uri goto-url query)
+(define (dispatch-uri query)
   ;; uriとみなす為の判定に必要な部分は、以下の通り
   ;; - 文字列全体が*re:url*にマッチするなら、無条件でuri。
   ;;   しかし、そうでないなら、以下の判定を続行
@@ -282,7 +282,7 @@
                  (_ (string=? "" (m 'before)))
                  (_ (string=? "" (m 'after))))
         #t)
-    (goto-url query)
+    query ; 最初から完全なurlだったので、特に処理は不要
     (and-let* (
                ;; まず、whitespaceの除去を行う
                (query-wo-ws (regexp-replace-all #/\s/ query ""))
@@ -308,74 +308,103 @@
                       (match-domain)
                       ;; rest
                       (match-rest))))
-      (goto-url url))))
+      url)))
 
-(define (make-goto-url return)
-  ;(define (goto-url url)
-  ;  (return
-  ;    (cgi-header
-  ;      :pragma "no-cache"
-  ;      :cache-control "no-cache"
-  ;      :location url)))
-  (define (goto-url url :optional (location #f))
-    ;; http://www.teria.com/~koseki/memo/referrer/
-    (return
-      (if location
-        (cgi-header
-          :pragma "no-cache"
-          :cache-control "no-cache"
-          :location url)
-        (list
-          (cgi-header
-            :pragma "no-cache"
-            :cache-control "no-cache"
-            :refresh #`"0; URL=,url")
-          (html:html
-            (html:head
-              (html:meta :http-equiv "Refresh"
-                         :content #`"0; URL=,url"))
-            (html:body
-              (html:div
-                (html:a :href url (html-escape-string url)))))))))
-  goto-url)
+(define (location-url url :optional (location #f))
+  ;; http://www.teria.com/~koseki/memo/referrer/
+  (if location
+    (cgi-header
+      :pragma "no-cache"
+      :cache-control "no-cache"
+      :location url)
+    (list
+      (cgi-header
+        :pragma "no-cache"
+        :cache-control "no-cache"
+        :refresh #`"0; URL=,url")
+      (html:html
+        (html:head
+          (html:meta :http-equiv "Refresh"
+                     :content #`"0; URL=,url"))
+        (html:body
+          (html:div
+            (html:a :href url (html-escape-string url))))))))
+
+(define-macro (apply-mv receiver sender)
+  `(receive r ,sender
+     (apply ,receiver r)))
+(define-macro (apply-mv* receiver sender)
+  ;; apply-mvの、senderの返り値の最初の要素が#fだったら
+  ;; receiverに渡さずに#fを返すバージョン
+  `(receive r ,sender
+     (cond
+       ((null? r) #f)
+       ((not (car r)) #f)
+       (else
+         (apply ,receiver r)))))
 
 (define (emit-content-solve params)
-  (let/cc return
-    (let1 goto-url (make-goto-url return)
-      ;; TODO: goto-urlを直に渡すのではなく、手続きの返り値がurlか#fかで
-      ;;       分岐させるようにした方がいい
-      ;; TODO: trim系は、全角スペースも除去すべき？
-      (let* ((query (cgi-get-parameter "q" params :default ""))
-             (_ (when (string=? "" query) (goto-url (self-url) #t)))
-             ;; まず、改行が意味を持つ分岐を先に処理
-             (_ (dispatch-w-nl goto-url query))
-             ;; 改行を除去する
-             (query-wo-nl (regexp-replace-all #/\n|\r/ query " "))
-             ;; 先頭/末尾のwhitespaceを除去
-             (query-wo-nl/trimmed (regexp-replace-all
-                                    #/(^\s+)|(\s+$)/ query-wo-nl ""))
-             ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
-             ;; コマンド文字列は、1〜4文字のasciiとする
-             (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,4})(?:\s+|$)/
-                          query-wo-nl/trimmed))
-             (cmd (and cmd-match (string-downcase (cmd-match 1))))
-             (query-wo-cmd (if cmd-match
-                             (cmd-match 'after)
-                             query-wo-nl/trimmed))
-             (_ (when (and
-                        (not cmd)
-                        (string=? "" query-wo-nl/trimmed))
-                  (goto-url (self-url) #t)))
-             ;; コマンドを処理
-             (_ (dispatch-w-cmd goto-url cmd query-wo-cmd))
-             ;; 内容がuriっぽかったら、uriとして処理を行う
-             (_ (dispatch-uri goto-url query-wo-nl/trimmed))
-             )
-        ;; どれにもマッチしなかった。google検索する
-        (goto-url
-          (append-params-to-url
-            "http://www.google.com/search"
-            `(("q" ,query-wo-nl/trimmed))))))))
+  (define (solve return)
+    ;; TODO: trim系は、全角スペースも除去すべき？
+    (let* (
+           (query (cgi-get-parameter "q" params :default ""))
+           ;; 空だった
+           (_ (when (string=? "" query) (return (self-url) 'url/redirect)))
+           ;; まず、改行が意味を持つ分岐を先に処理
+           (_ (apply-mv* return (dispatch-w-nl query)))
+           ;; 改行を除去する
+           (query-wo-nl (regexp-replace-all #/\n|\r/ query " "))
+           ;; 先頭/末尾のwhitespaceを除去
+           (query-wo-nl/trimmed (regexp-replace-all
+                                  #/(^\s+)|(\s+$)/ query-wo-nl ""))
+           ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
+           ;; コマンド文字列は、1〜4文字のasciiとする
+           (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,4})(?:\s+|$)/
+                        query-wo-nl/trimmed))
+           (cmd (and cmd-match (string-downcase (cmd-match 1))))
+           (query-wo-cmd (if cmd-match
+                           (cmd-match 'after)
+                           query-wo-nl/trimmed))
+           ;; 何かおかしい、無効化
+           (_ (when (and
+                      (not cmd)
+                      (string=? "" query-wo-nl/trimmed))
+                (return (self-url) 'url/redirect)))
+           ;; コマンドを処理
+           (_ (apply-mv* return (dispatch-w-cmd cmd query-wo-cmd)))
+           ;; 内容がuriっぽかったら、uriとして処理を行う
+           (_ (apply-mv* return (dispatch-uri query-wo-nl/trimmed)))
+           )
+      ;; どれにもマッチしなかった。google検索する
+      (append-params-to-url
+        "http://www.google.com/search"
+        `(("q" ,query-wo-nl/trimmed)))))
+
+  (receive r (call/cc solve)
+    (or
+      (and-let* ((_ (< 0 (length r)))
+                 (url-or-other (car r))
+                 (mode-flag (if (null? (cdr r)) 'url (cadr r))))
+        (case mode-flag
+          ;; TODO: url系は、url-or-otherが本当に正しいurlか検証した方がいい
+          ;;       (大したコストではないので)
+          ((url) (location-url url-or-other))
+          ((url/redirect) (location-url url-or-other #t))
+          ((cgi) url-or-other)
+          ((text) (list
+                    (cgi-header :content-type "text/plain"
+                                ;:content-type "text/plain; charset=utf-8"
+                                :pragma "no-cache"
+                                :cache-control "no-cache")
+                    url-or-other))
+          ((html) (list
+                    (cgi-header :content-type "text/html"
+                                ;:content-type "text/html; charset=utf-8"
+                                :pragma "no-cache"
+                                :cache-control "no-cache")
+                    url-or-other))
+          (else #f)))
+      (error "assertion" r))))
 
 
 (define (append-params-to-url url params)
@@ -480,43 +509,65 @@
 
 ;;; 以下は、個々のコマンド定義
 
-(define-cmd (h query)
-  "HEAD"
-  ;; TODO: あとでHEADする機能を追加する事
-  ;; TODO: 外部に別cgiを作らず、リダイレクト無しにHEADするには、
-  ;;       もう少し拡張する必要がある
+(define-cmd (test query . opts)
+  "this is template for new command"
   (string-append
     (self-url)
     "?q=not%20implemented"))
-(define-cmd (e query)
+(define (http-*-url func url . keywords)
+  ;; func は http-get http-head http-delete の、どれか
+  ;; (http-post http-put は今のところ未対応)
+  (receive (scheme user host port path query fragment) (uri-parse url)
+    (let ((server (if port
+                    #`",|host|:,|port|"
+                    host))
+          (request-uri (if query
+                         #`",|path|?,|query|"
+                         path))
+          )
+      (apply func server request-uri keywords))))
+(define-cmd (h query . opts)
+  "HEAD"
+  (or
+    (and-let* ((m (*re:url* query))
+               (url (m)))
+      ;; TODO: 例外処理をちゃんとする
+      (receive (status headers body) (http-*-url http-head url :no-redirect #t)
+        (values
+          (intersperse
+            "\n"
+            (list
+              status
+              (intersperse "\n" (map write-to-string headers))
+              body))
+          'text)))
+    (string-append
+      (self-url)
+      "?q=invalid%20url%20"
+      (uri-encode-string query))))
+(define-cmd (e query . opts)
   "英辞郎"
   (string-append
     "http://eow.alc.co.jp/"
     (uri-encode-string query)
     "/UTF-8/"))
-(define-cmd (w query)
+(define-cmd (w query . opts)
   "ja.wikipedia.org"
   (string-append
     "http://ja.wikipedia.org/wiki/"
     (uri-encode-string query)))
-(define-cmd (a query)
+(define-cmd (a query . opts)
   "amazon.co.jp"
   (string-append
     "http://www.amazon.co.jp/s/?__mk_ja_JP="
     (uri-encode-string "カタカナ")
     "&url=search-alias%3Daps&field-keywords="
     (uri-encode-string query)))
-(define-cmd (j query)
+(define-cmd (j query . opts)
   "jwhois.cgi"
   (string-append
     "http://sakura.tir.jp/jwhois.cgi?q="
     (uri-encode-string query)))
-;(define-cmd (ej query)
-;  "英和"
-;  ...)
-;(define-cmd (je query)
-;  "和英"
-;  ...)
 (define *gosh-completions-cache* #f)
 (define (gosh-completions-exists? query)
   ;; NB この判定では不完全な時がある
@@ -530,7 +581,7 @@
         (hash-table-put! *gosh-completions-cache* line #t))
       (file->string-list "/home/nekoie/.gosh_completions")))
   (hash-table-get *gosh-completions-cache* query #f))
-(define-cmd (g query)
+(define-cmd (g query . opts)
   "gauche-refj"
   (string-append
     (if (or
