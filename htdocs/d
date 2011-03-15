@@ -590,6 +590,11 @@
       "http://practical-scheme.net/gauche/man/?l=jp&p="
       "http://www.callcc.net/gauche/refj/estseek.cgi?order=%40size+NUMA&phrase=")
     (uri-encode-string query)))
+(define-cmd (gj query . opts)
+  "google.co.jp"
+  (string-append
+    "http://www.google.co.jp/search?lr=lang_ja&q="
+    (uri-encode-string query)))
 
 
 
