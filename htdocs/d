@@ -509,11 +509,11 @@
 
 ;;; 以下は、個々のコマンド定義
 
-(define-cmd (test query . opts)
-  "this is template for new command"
-  (string-append
-    (self-url)
-    "?q=not%20implemented"))
+;(define-cmd (test query . opts)
+;  "this is template for new command"
+;  (string-append
+;    (self-url)
+;    "?q=not%20implemented"))
 (define (http-*-url func url . keywords)
   ;; func は http-get http-head http-delete の、どれか
   ;; (http-post http-put は今のところ未対応)
