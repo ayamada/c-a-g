@@ -145,6 +145,16 @@
           (string-byte-ref src idx)))
       (iota (- end start) start))
     result))
+
+(define (queries->lines:mutt queries)
+  (let1 r (map
+            (lambda (line)
+              (and-let* ((m (#/^\+/ line)))
+                (m 'after)))
+            queries)
+    (if (find-tail not r)
+      #f ; 一個でも偽値があれば#fを返す
+      r)))
 (define (queries->lines:vimirc-single queries)
   (let1 r (map
             (lambda (line)
@@ -213,7 +223,9 @@
     (m)))
 
 (define (dispatch-w-nl query)
-  ;; 今のところ、vimircのコピペのみ対応
+  ;; - muttのコピペ
+  ;; 改行後にすぐに+があるなら、それを除去して、urlとみなす
+  ;; - vimircのコピペ
   ;; 対応する必要があるのは、以下のような、一行80文字までの、改行区切りの文字列
   ;; (例1:vimircのシングルモード)
   ;;  [1]irc.server-name.|01:48 <nick>: あいうえおかきくけこさしすせ htt|@nick2
@@ -239,6 +251,8 @@
     (cond
       ;; queriesが複数ない場合はパスする
       ((< (length queries) 2) #f)
+      ;; mutt
+      ((queries->lines:mutt queries) => resolve-lines)
       ;; singleを優先する必要がある(両方にマッチする可能性がある為)
       ((queries->lines:vimirc-single queries) => resolve-lines)
       ((queries->lines:vimirc-multi queries) => resolve-lines)
