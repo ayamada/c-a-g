@@ -14,6 +14,7 @@
   (use util.list)
   (use file.util)
   (use gauche.charconv)
+  (debug-print-width #f)
   (export
     ))
 (select-module c-a-g.cgi)
@@ -147,11 +148,13 @@
     result))
 
 (define (queries->lines:mutt queries)
-  (let1 r (map
-            (lambda (line)
-              (and-let* ((m (#/^\+/ line)))
-                (m 'after)))
-            queries)
+  (let1 r (cons
+            (car queries)
+            (map
+              (lambda (line)
+                (and-let* ((m (#/^\+/ line)))
+                  (m 'after)))
+              (cdr queries)))
     (if (find-tail not r)
       #f ; 一個でも偽値があれば#fを返す
       r)))
