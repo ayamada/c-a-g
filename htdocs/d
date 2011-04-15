@@ -612,6 +612,11 @@
   (string-append
     "http://www.google.co.jp/search?lr=lang_ja&q="
     (uri-encode-string query)))
+(define-cmd (wa query . opts)
+  "wolfram alpha"
+  (string-append
+    "http://www.wolframalpha.com/input/?i="
+    (uri-encode-string query)))
 
 
 
