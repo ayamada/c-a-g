@@ -543,8 +543,28 @@
                          path))
           )
       (apply func server request-uri keywords))))
+(define-cmd (get query . opts)
+  "HTTP GET"
+  (or
+    (and-let* ((m (*re:url* query))
+               (url (m)))
+      ;; TODO: 例外処理をちゃんとする
+      ;; TODO: encoding対応
+      (receive (status headers body) (http-*-url http-get url :no-redirect #t)
+        (values
+          (intersperse
+            "\n"
+            (list
+              status
+              (intersperse "\n" (map write-to-string headers))
+              body))
+          'text)))
+    (string-append
+      (self-url)
+      "?q=invalid%20url%20"
+      (uri-encode-string query))))
 (define-cmd (h query . opts)
-  "HEAD"
+  "HTTP HEAD"
   (or
     (and-let* ((m (*re:url* query))
                (url (m)))
