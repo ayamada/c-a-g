@@ -285,6 +285,16 @@
 (define *re:url*
   #/https?\:\/\/[\!\#\$\%\&\'\*\+\,\-\.\/0-9\:\;\=\?\@A-Z\_a-z\~\[\]]+/)
 
+(define (rewrite-uri url)
+  (cond
+    ((not url) #f)
+    ((and
+       (#/www\.amazon\.co\.jp/ url)
+       (#/\/([0-9a-zA-Z]{10})(?:$|\/)/ url)) =>
+     (lambda (m)
+       (string-append "http://www.amazon.co.jp/dp/" (m 1))))
+    (else url)))
+
 (define (dispatch-uri query)
   ;; uriとみなす為の判定に必要な部分は、以下の通り
   ;; - 文字列全体が*re:url*にマッチするなら、無条件でuri。
@@ -390,7 +400,8 @@
            ;; コマンドを処理
            (_ (apply-mv* return (dispatch-w-cmd cmd query-wo-cmd)))
            ;; 内容がuriっぽかったら、uriとして処理を行う
-           (_ (apply-mv* return (dispatch-uri query-wo-nl/trimmed)))
+           (_ (apply-mv* return (rewrite-uri
+                                  (dispatch-uri query-wo-nl/trimmed))))
            )
       ;; どれにもマッチしなかった。google検索する
       (append-params-to-url
