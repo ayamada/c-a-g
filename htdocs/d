@@ -648,6 +648,11 @@
   (string-append
     "http://www.wolframalpha.com/input/?i="
     (uri-encode-string query)))
+(define-cmd (gi query . opts)
+  "google画像検索"
+  (string-append
+    "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
+    (uri-encode-string query)))
 
 
 
