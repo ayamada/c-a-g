@@ -653,6 +653,12 @@
   (string-append
     "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
     (uri-encode-string query)))
+;; POST の multipart/form-data しか受け付けないっぽい？
+;(define-cmd (2 query . opts)
+;  "二次元画像詳細検索"
+;  (string-append
+;    "http://www.ascii2d.net/imagesearch/search?uri="
+;    (uri-encode-string query)))
 
 
 
