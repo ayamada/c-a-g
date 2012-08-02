@@ -660,23 +660,24 @@
   (string-append
     "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
     (uri-encode-string query)))
-(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
-(define-cmd (ts query query-orig . opts) ; text-store
-  "バッファにテキスト保存"
-  (let1 text ((#/^ts\s+/i query-orig) 'after)
-    ;; TODO: 将来的には四桁ぐらいの文字列で鍵をかけたいところ
-    (with-output-to-file
-      *text-buffer-path*
-      (lambda ()
-        (display text)))
-    (values "done." 'text)))
-(define-cmd (tw query . opts) ; text-withdraw
-  "バッファからテキスト取り出し"
-  ;; TODO: 将来的にはtsで出力された鍵でのみ取り出せるようにする
-  (let1 text (guard (e (else "not found"))
-               (file->string *text-buffer-path*))
-    (remove-files *text-buffer-path*) ; 削除する
-    (values text 'text)))
+
+;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
+;(define-cmd (ts query query-orig . opts) ; text-store
+;  "バッファにテキスト保存"
+;  (let1 text ((#/^ts\s+/i query-orig) 'after)
+;    ;; TODO: 将来的には四桁ぐらいの文字列で鍵をかけたいところ
+;    (with-output-to-file
+;      *text-buffer-path*
+;      (lambda ()
+;        (display text)))
+;    (values "done." 'text)))
+;(define-cmd (tw query . opts) ; text-withdraw
+;  "バッファからテキスト取り出し"
+;  ;; TODO: 将来的にはtsで出力された鍵でのみ取り出せるようにする
+;  (let1 text (guard (e (else "not found"))
+;               (file->string *text-buffer-path*))
+;    (remove-files *text-buffer-path*) ; 削除する
+;    (values text 'text)))
 
 
 ;; POST の multipart/form-data しか受け付けないっぽい？
