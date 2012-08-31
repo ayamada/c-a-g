@@ -660,6 +660,16 @@
   (string-append
     "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
     (uri-encode-string query)))
+(define-cmd (ha query . opts)
+  "Hayoo!"
+  (string-append
+    "http://holumbus.fh-wedel.de/hayoo/hayoo.html?query="
+    (uri-encode-string query)))
+(define-cmd (ho query . opts)
+  "Hoogle"
+  (string-append
+    "http://www.haskell.org/hoogle/?hoogle="
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
