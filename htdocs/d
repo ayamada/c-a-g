@@ -564,7 +564,7 @@
       (receive (status headers body) (http-*-url http-get url :no-redirect #t)
         (values
           (intersperse
-            "\n"
+            "\n\n"
             (list
               status
               (intersperse "\n" (map write-to-string headers))
@@ -583,7 +583,7 @@
       (receive (status headers body) (http-*-url http-head url :no-redirect #t)
         (values
           (intersperse
-            "\n"
+            "\n\n"
             (list
               status
               (intersperse "\n" (map write-to-string headers))
