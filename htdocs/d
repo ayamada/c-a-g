@@ -670,6 +670,11 @@
   (string-append
     "http://www.haskell.org/hoogle/?hoogle="
     (uri-encode-string query)))
+(define-cmd (tr query . opts)
+  "twitter rss"
+  (string-append
+    "https://search.twitter.com/search.atom?q=from%3a"
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
