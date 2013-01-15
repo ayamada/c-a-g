@@ -384,8 +384,8 @@
            (query-wo-nl/trimmed (regexp-replace-all
                                   #/(^[\s　]+)|([\s　]+$)/ query-wo-nl ""))
            ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
-           ;; コマンド文字列は、1〜4文字のasciiとする
-           (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,4})(?:\s+|$)/
+           ;; コマンド文字列は、1〜6文字のasciiとする
+           (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,6})(?:\s+|$)/
                         query-wo-nl/trimmed))
            (cmd (and cmd-match (string-downcase (cmd-match 1))))
            (query-wo-cmd (if cmd-match
@@ -674,6 +674,11 @@
   "twitter rss"
   (string-append
     "https://search.twitter.com/search.atom?q=from%3a"
+    (uri-encode-string query)))
+(define-cmd (libgdx query . opts)
+  "libgdx api"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q=+site:l33tlabs.org/docs/api/+"
     (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
