@@ -675,10 +675,15 @@
   (string-append
     "https://search.twitter.com/search.atom?q=from%3a"
     (uri-encode-string query)))
-(define-cmd (libgdx query . opts)
+(define-cmd (gdx query . opts)
   "libgdx api"
   (string-append
     "http://www.google.com/search?nfpr=1&q=+site:l33tlabs.org/docs/api/+"
+    (uri-encode-string query)))
+(define-cmd (clj query . opts)
+  "clojure api"
+  (string-append
+    "http://clojure.org/search/view/"
     (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
