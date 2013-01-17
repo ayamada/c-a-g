@@ -678,7 +678,8 @@
 (define-cmd (gdx query . opts)
   "libgdx api"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+site:l33tlabs.org/docs/api/+"
+    "http://www.google.com/search?nfpr=1&q=+"
+    "site:libgdx.badlogicgames.com/nightlies/docs/api/+"
     (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
