@@ -686,6 +686,20 @@
   (string-append
     "http://clojure.org/search/view/"
     (uri-encode-string query)))
+(define-cmd (jman query . opts)
+  "jman"
+  (string-append
+    "http://linuxjm.sourceforge.jp/cgi-bin/man.cgi?"
+    "Pagename=" (uri-encode-string query) "&"
+    "submit=Search%21&"
+    "Sec1=on&"
+    "Sec2=on&"
+    "Sec3=on&"
+    "Sec4=on&"
+    "Sec5=on&"
+    "Sec6=on&"
+    "Sec7=on&"
+    "Sec8=on"))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
