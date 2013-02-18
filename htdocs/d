@@ -681,11 +681,49 @@
     "http://www.google.com/search?nfpr=1&q=+"
     "site:libgdx.badlogicgames.com/nightlies/docs/api/+"
     (uri-encode-string query)))
+(define *clojure-api-url* "http://clojure.github.com/clojure/")
+(define *clojure-api-table* #f)
+(define (get-clojure-api-url query)
+  (define (html-unescape-string html)
+    ;((#\<) (display "&lt;"))
+    ;((#\>) (display "&gt;"))
+    ;((#\&) (display "&amp;"))
+    ;((#\") (display "&quot;"))
+    (regexp-replace-all
+      #/\&(\w+)\;/
+      html
+      (lambda (m)
+        (case (string->symbol (string-downcase (m 1)))
+          ((lt) "<")
+          ((gt) ">")
+          ((amp) "&")
+          ((quot) "\"")
+          (else (m))))))
+  (unless *clojure-api-table*
+    (receive (status headers body) (http-*-url http-get
+                                               *clojure-api-url*
+                                               :no-redirect #t)
+      (unless (equal? status "200")
+        (error #`"cannot get ,*clojure-api-url*"))
+      (let1 t (make-hash-table 'string=?)
+        (regexp-replace-all
+          #/\<a href\=\"([^"]*)\" id\=\"var\-tag\"\>([^<]*)\<\/a\>/
+          body
+          (lambda (m)
+            (let ((href (html-unescape-string (m 1)))
+                  (label (html-unescape-string (m 2))))
+              (hash-table-put! t
+                               (string-downcase label)
+                               (string-append *clojure-api-url* href)))))
+        (set! *clojure-api-table* t))))
+  (hash-table-get *clojure-api-table* (string-downcase query) #f))
 (define-cmd (clj query . opts)
   "clojure api"
-  (string-append
-    "http://clojure.org/search/view/"
-    (uri-encode-string query)))
+  (or
+    (get-clojure-api-url query)
+    (string-append
+      "http://clojure.org/search/view/"
+      (uri-encode-string query))))
 (define-cmd (jman query . opts)
   "jman"
   (string-append
