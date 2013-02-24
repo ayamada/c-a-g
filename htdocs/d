@@ -720,9 +720,9 @@
 (define-cmd (clj query . opts)
   "clojure api"
   (or
-    (get-clojure-api-url query)
+    ;(get-clojure-api-url query)
     (string-append
-      "http://clojure.org/search/view/"
+      "http://clojuredocs.org/search?q="
       (uri-encode-string query))))
 (define-cmd (jman query . opts)
   "jman"
