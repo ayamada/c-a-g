@@ -593,13 +593,19 @@
       (self-url)
       "?q=invalid%20url%20"
       (uri-encode-string query))))
+;(define-cmd (s query . opts)
+;  "www.synonym.com"
+;  (string-append
+;    "http://www.synonym.com/synonyms/"
+;    ;; TODO: synonym.comでは%nnエスケープは空白以外駄目。対策した方がいい
+;    (uri-encode-string query)
+;    "/"))
 (define-cmd (s query . opts)
-  "www.synonym.com"
+  "thesaurus.com"
   (string-append
-    "http://www.synonym.com/synonyms/"
-    ;; TODO: synonym.comでは%nnエスケープは空白以外駄目。対策した方がいい
+    "http://thesaurus.com/browse/"
     (uri-encode-string query)
-    "/"))
+    ""))
 (define-cmd (e query . opts)
   "英辞郎"
   (string-append
