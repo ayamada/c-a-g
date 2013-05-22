@@ -600,10 +600,16 @@
 ;    ;; TODO: synonym.comでは%nnエスケープは空白以外駄目。対策した方がいい
 ;    (uri-encode-string query)
 ;    "/"))
-(define-cmd (s query . opts)
+(define-cmd (t query . opts)
   "thesaurus.com"
   (string-append
     "http://thesaurus.com/browse/"
+    (uri-encode-string query)
+    ""))
+(define-cmd (codic query . opts)
+  "codic.jp"
+  (string-append
+    "http://codic.jp/search?q="
     (uri-encode-string query)
     ""))
 (define-cmd (e query . opts)
