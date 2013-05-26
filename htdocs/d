@@ -672,6 +672,11 @@
   (string-append
     "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
     (uri-encode-string query)))
+(define-cmd (gt query . opts)
+  "google翻訳"
+  (string-append
+    "http://translate.google.co.jp/#auto/ja/"
+    (uri-encode-string query)))
 (define-cmd (ha query . opts)
   "Hayoo!"
   (string-append
