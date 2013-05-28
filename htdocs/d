@@ -734,6 +734,12 @@
                                (string-append *clojure-api-url* href)))))
         (set! *clojure-api-table* t))))
   (hash-table-get *clojure-api-table* (string-downcase query) #f))
+(define-cmd (rdc query . opts)
+  "逆引きclojure"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q=+"
+    "site:rd.clojure-users.org/+"
+    (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
   (or
