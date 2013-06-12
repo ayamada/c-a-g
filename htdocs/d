@@ -688,9 +688,9 @@
     "http://www.haskell.org/hoogle/?hoogle="
     (uri-encode-string query)))
 (define-cmd (tr query . opts)
-  "twitter rss"
+  "twitter-rss"
   (string-append
-    "https://search.twitter.com/search.atom?q=from%3a"
+    "http://www.twitter-rss.com/user_timeline.php?screen_name="
     (uri-encode-string query)))
 (define-cmd (gdx query . opts)
   "libgdx api"
