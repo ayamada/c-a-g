@@ -767,6 +767,12 @@
   (string-append
     "https://clojars.org/search?q="
     (uri-encode-string query)))
+(define-cmd (unity query . opts)
+  "unity reference"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q=+"
+    "site:docs-jp.unity3d.com/Documentation/+"
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
