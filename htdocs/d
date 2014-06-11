@@ -691,7 +691,8 @@
   "twitter-rss"
   (string-append
     ;"http://www.twitter-rss.com/user_timeline.php?screen_name="
-    "http://pipes.yahoo.com/pipes/pipe.run?_id=c2e8fd12a3c7c90294be218f5d906466&_render=rss&screen_name="
+    ;"http://www.rssitfor.me/getrss?name="
+    "http://pipes.yahoo.com/pipes/pipe.run?_id=fe17aeb532da1aeb9dc5c0701746a6ac&_render=rss&c=1&l=ja&s=new&u="
     (uri-encode-string query)))
 (define-cmd (gdx query . opts)
   "libgdx api"
