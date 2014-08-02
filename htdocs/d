@@ -774,6 +774,12 @@
     "http://www.google.com/search?nfpr=1&q=+"
     "site:docs-jp.unity3d.com/Documentation/+"
     (uri-encode-string query)))
+(define-cmd (boo query . opts)
+  "boo wiki"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q=+"
+    "site:github.com/bamboo/boo/wiki+"
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
