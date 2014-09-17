@@ -780,6 +780,12 @@
     "http://www.google.com/search?nfpr=1&q=+"
     "site:github.com/bamboo/boo/wiki+"
     (uri-encode-string query)))
+(define-cmd (crafty query . opts)
+  "crafty api"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q=+"
+    "site:craftyjs.com/api/+"
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
