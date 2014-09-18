@@ -748,9 +748,13 @@
   "clojure api"
   (or
     ;(get-clojure-api-url query)
-    (string-append
-      "http://clojuredocs.org/search?q="
-      (uri-encode-string query))))
+    ;(string-append
+    ;  "http://clojuredocs.org/search?q="
+    ;  (uri-encode-string query))
+    "http://grimoire.arrdem.com/"))
+(define-cmd (cljs query . opts)
+  "clojurescript api"
+  "http://himera.herokuapp.com/synonym.html")
 (define-cmd (jman query . opts)
   "jman"
   (string-append
