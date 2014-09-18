@@ -751,6 +751,9 @@
     ;(string-append
     ;  "http://clojuredocs.org/search?q="
     ;  (uri-encode-string query))
+    (string-append
+      "http://crossclj.info/search?q="
+      (uri-encode-string query))
     "http://grimoire.arrdem.com/"))
 (define-cmd (cljs query . opts)
   "clojurescript api"
