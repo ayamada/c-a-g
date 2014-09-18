@@ -384,8 +384,8 @@
            (query-wo-nl/trimmed (regexp-replace-all
                                   #/(^[\s　]+)|([\s　]+$)/ query-wo-nl ""))
            ;; queryの先頭にコマンド指定がされているなら、先にそれを取り出す
-           ;; コマンド文字列は、1〜7文字のasciiとする
-           (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,7})(?:\s+|$)/
+           ;; コマンド文字列は、1〜8文字のasciiとする
+           (cmd-match (#/^([\w\%\!\@\.\:\/\*\+\-]{1,8})(?:\s+|$)/
                         query-wo-nl/trimmed))
            (cmd (and cmd-match (string-downcase (cmd-match 1))))
            (query-wo-cmd (if cmd-match
@@ -697,8 +697,9 @@
 (define-cmd (gdx query . opts)
   "libgdx api"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+"
-    "site:libgdx.badlogicgames.com/nightlies/docs/api/+"
+    "http://www.google.com/search?nfpr=1&q="
+    "site:libgdx.badlogicgames.com/nightlies/docs/api/"
+    "+"
     (uri-encode-string query)))
 (define *clojure-api-url* "http://clojure.github.com/clojure/")
 (define *clojure-api-table* #f)
@@ -739,8 +740,9 @@
 (define-cmd (rdc query . opts)
   "逆引きclojure"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+"
-    "site:rd.clojure-users.org/+"
+    "http://www.google.com/search?nfpr=1&q="
+    "site:rd.clojure-users.org/"
+    "+"
     (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
@@ -771,20 +773,32 @@
 (define-cmd (unity query . opts)
   "unity reference"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+"
-    "site:docs-jp.unity3d.com/Documentation/+"
+    "http://www.google.com/search?nfpr=1&q="
+    "site:docs-jp.unity3d.com/Documentation/"
+    "+"
     (uri-encode-string query)))
 (define-cmd (boo query . opts)
   "boo wiki"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+"
-    "site:github.com/bamboo/boo/wiki+"
+    "http://www.google.com/search?nfpr=1&q="
+    "site:github.com/bamboo/boo/wiki"
+    "+"
     (uri-encode-string query)))
 (define-cmd (crafty query . opts)
   "crafty api"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=+"
-    "site:craftyjs.com/api/+"
+    "http://www.google.com/search?nfpr=1&q="
+    "site:craftyjs.com/api/"
+    "+"
+    (uri-encode-string query)))
+(define-cmd (craftyjs query . opts)
+  "crafty source"
+  (string-append
+    ;"http://www.google.com/search?nfpr=1&q="
+    ;"site:github.com/craftyjs/Crafty/tree/develop/src"
+    ;"site:raw.githubusercontent.com/craftyjs/Crafty/"
+    ;"+"
+    "https://github.com/craftyjs/Crafty/search?utf8=%E2%9C%93&q="
     (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
