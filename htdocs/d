@@ -746,15 +746,17 @@
     (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
-  (or
-    ;(get-clojure-api-url query)
-    ;(string-append
-    ;  "http://clojuredocs.org/search?q="
-    ;  (uri-encode-string query))
-    (string-append
-      "http://crossclj.info/search?q="
-      (uri-encode-string query))
-    "http://grimoire.arrdem.com/"))
+  (string-append
+    "http://clojuredocs.org/search?q="
+    (uri-encode-string query)))
+(define-cmd (grimoire query . opts)
+  "clojure api"
+  "http://grimoire.arrdem.com/")
+(define-cmd (cclj query . opts)
+  "crossclj"
+  (string-append
+    "http://crossclj.info/search?q="
+    (uri-encode-string query)))
 (define-cmd (cljs query . opts)
   "clojurescript api"
   "http://himera.herokuapp.com/synonym.html")
@@ -806,6 +808,13 @@
     ;"site:raw.githubusercontent.com/craftyjs/Crafty/"
     ;"+"
     "https://github.com/craftyjs/Crafty/search?utf8=%E2%9C%93&q="
+    (uri-encode-string query)))
+(define-cmd (craftyw query . opts)
+  "crafty wiki"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q="
+    "site:github.com/craftyjs/Crafty/wiki"
+    "+"
     (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
