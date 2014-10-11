@@ -816,6 +816,13 @@
     "site:github.com/craftyjs/Crafty/wiki"
     "+"
     (uri-encode-string query)))
+(define-cmd (pixi query . opts)
+  "pixi api"
+  (string-append
+    "http://www.google.com/search?nfpr=1&q="
+    "site:www.goodboydigital.com/pixijs/docs/"
+    "+"
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
