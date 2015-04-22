@@ -759,7 +759,7 @@
     (uri-encode-string query)))
 (define-cmd (cljs query . opts)
   "clojurescript api"
-  "http://himera.herokuapp.com/synonym.html")
+  "http://cljs.info/cheatsheet/")
 (define-cmd (jman query . opts)
   "jman"
   (string-append
