@@ -290,7 +290,7 @@
     ((not url) #f)
     ((and
        (#/www\.amazon\.co\.jp/ url)
-       (#/\/([0-9a-zA-Z]{10})(?:$|\/)/ url)) =>
+       (#/\/([0-9a-zA-Z]{10})(?:$|\/|\?)/ url)) =>
      (lambda (m)
        (string-append "http://www.amazon.co.jp/dp/" (m 1))))
     (else url)))
