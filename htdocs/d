@@ -819,8 +819,9 @@
 (define-cmd (pixi query . opts)
   "pixi api"
   (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:www.goodboydigital.com/pixijs/docs/"
+    "http://www.google.com/search?nfpr=1&q=site:"
+    ;"www.goodboydigital.com/pixijs/docs/" ; v2
+    "pixijs.github.io/docs/" ; v3
     "+"
     (uri-encode-string query)))
 
