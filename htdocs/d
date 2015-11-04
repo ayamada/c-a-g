@@ -692,8 +692,10 @@
   (string-append
     ;"http://www.twitter-rss.com/user_timeline.php?screen_name="
     ;"http://www.rssitfor.me/getrss?name="
-    "http://pipes.yahoo.com/pipes/pipe.run?_id=fe17aeb532da1aeb9dc5c0701746a6ac&_render=rss&c=1&l=ja&s=new&u="
-    (uri-encode-string query)))
+    ;"http://pipes.yahoo.com/pipes/pipe.run?_id=fe17aeb532da1aeb9dc5c0701746a6ac&_render=rss&c=1&l=ja&s=new&u="
+    ;(uri-encode-string query)
+    "https://queryfeed.net/"
+    ))
 (define-cmd (gdx query . opts)
   "libgdx api"
   (string-append
