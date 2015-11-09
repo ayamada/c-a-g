@@ -694,7 +694,9 @@
     ;"http://www.rssitfor.me/getrss?name="
     ;"http://pipes.yahoo.com/pipes/pipe.run?_id=fe17aeb532da1aeb9dc5c0701746a6ac&_render=rss&c=1&l=ja&s=new&u="
     ;(uri-encode-string query)
-    "https://queryfeed.net/"
+    ;"https://queryfeed.net/"
+    "https://queryfeed.net/tw?q="
+    (uri-encode-string query)
     ))
 (define-cmd (gdx query . opts)
   "libgdx api"
