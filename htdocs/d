@@ -751,7 +751,7 @@
 (define-cmd (clj query . opts)
   "clojure api"
   (string-append
-    "http://clojuredocs.org/#"
+    "http://clojuredocs.org/search?q="
     (uri-encode-string query)))
 (define-cmd (grimoire query . opts)
   "clojure api"
