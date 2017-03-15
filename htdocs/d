@@ -832,7 +832,8 @@
   (string-append
     "http://www.google.com/search?nfpr=1&q=site:"
     ;"www.goodboydigital.com/pixijs/docs/" ; v2
-    "pixijs.github.io/docs/" ; v3
+    ;"pixijs.github.io/docs/" ; v3
+    "pixijs.download/release/docs/" ; v4
     "+"
     (uri-encode-string query)))
 
