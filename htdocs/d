@@ -836,6 +836,11 @@
     "pixijs.download/release/docs/" ; v4
     "+"
     (uri-encode-string query)))
+(define-cmd (sketchup query . opts)
+  "sketchup"
+  (string-append
+    "https://3dwarehouse.sketchup.com/search/?q="
+    (uri-encode-string query)))
 
 ;(define *text-buffer-path* "/var/nekoie/data/c-a-g/buffer.dump")
 ;(define-cmd (ts query query-orig . opts) ; text-store
