@@ -613,6 +613,12 @@
     "http://thesaurus.com/browse/"
     (uri-encode-string query)
     ""))
+(define-cmd (t query . opts)
+  "連想類語辞典"
+  (string-append
+    "https://renso-ruigo.com/word/"
+    (uri-encode-string query)
+    ""))
 (define-cmd (codic query . opts)
   "codic.jp"
   (string-append
@@ -684,16 +690,16 @@
   (string-append
     "http://translate.google.co.jp/#auto/ja/"
     (uri-encode-string query)))
-(define-cmd (ha query . opts)
-  "Hayoo!"
-  (string-append
-    "http://holumbus.fh-wedel.de/hayoo/hayoo.html?query="
-    (uri-encode-string query)))
-(define-cmd (ho query . opts)
-  "Hoogle"
-  (string-append
-    "http://www.haskell.org/hoogle/?hoogle="
-    (uri-encode-string query)))
+;(define-cmd (ha query . opts)
+;  "Hayoo!"
+;  (string-append
+;    "http://holumbus.fh-wedel.de/hayoo/hayoo.html?query="
+;    (uri-encode-string query)))
+;(define-cmd (ho query . opts)
+;  "Hoogle"
+;  (string-append
+;    "http://www.haskell.org/hoogle/?hoogle="
+;    (uri-encode-string query)))
 (define-cmd (tr query . opts)
   "twitter-rss"
   (string-append
@@ -705,13 +711,13 @@
     "https://queryfeed.net/tw?q="
     (uri-encode-string query)
     ))
-(define-cmd (gdx query . opts)
-  "libgdx api"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:libgdx.badlogicgames.com/nightlies/docs/api/"
-    "+"
-    (uri-encode-string query)))
+;(define-cmd (gdx query . opts)
+;  "libgdx api"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:libgdx.badlogicgames.com/nightlies/docs/api/"
+;    "+"
+;    (uri-encode-string query)))
 (define *clojure-api-url* "http://clojure.github.com/clojure/")
 (define *clojure-api-table* #f)
 (define (get-clojure-api-url query)
@@ -748,26 +754,26 @@
                                (string-append *clojure-api-url* href)))))
         (set! *clojure-api-table* t))))
   (hash-table-get *clojure-api-table* (string-downcase query) #f))
-(define-cmd (rdc query . opts)
-  "逆引きclojure"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:rd.clojure-users.org/"
-    "+"
-    (uri-encode-string query)))
+;(define-cmd (rdc query . opts)
+;  "逆引きclojure"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:rd.clojure-users.org/"
+;    "+"
+;    (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
   (string-append
     "http://clojuredocs.org/search?q="
     (uri-encode-string query)))
-(define-cmd (grimoire query . opts)
-  "clojure api"
-  "http://grimoire.arrdem.com/")
-(define-cmd (cclj query . opts)
-  "crossclj"
-  (string-append
-    "http://crossclj.info/search?q="
-    (uri-encode-string query)))
+;(define-cmd (grimoire query . opts)
+;  "clojure api"
+;  "http://grimoire.arrdem.com/")
+;(define-cmd (cclj query . opts)
+;  "crossclj"
+;  (string-append
+;    "http://crossclj.info/search?q="
+;    (uri-encode-string query)))
 (define-cmd (cljs query . opts)
   "clojurescript api"
   "http://cljs.info/cheatsheet/")
@@ -790,43 +796,43 @@
   (string-append
     "https://clojars.org/search?q="
     (uri-encode-string query)))
-(define-cmd (unity query . opts)
-  "unity reference"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:docs-jp.unity3d.com/Documentation/"
-    "+"
-    (uri-encode-string query)))
-(define-cmd (boo query . opts)
-  "boo wiki"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:github.com/bamboo/boo/wiki"
-    "+"
-    (uri-encode-string query)))
-(define-cmd (crafty query . opts)
-  "crafty api"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:craftyjs.com/api/"
-    "+"
-    (uri-encode-string query)))
-(define-cmd (craftyjs query . opts)
-  "crafty source"
-  (string-append
-    ;"http://www.google.com/search?nfpr=1&q="
-    ;"site:github.com/craftyjs/Crafty/tree/develop/src"
-    ;"site:raw.githubusercontent.com/craftyjs/Crafty/"
-    ;"+"
-    "https://github.com/craftyjs/Crafty/search?utf8=%E2%9C%93&q="
-    (uri-encode-string query)))
-(define-cmd (craftyw query . opts)
-  "crafty wiki"
-  (string-append
-    "http://www.google.com/search?nfpr=1&q="
-    "site:github.com/craftyjs/Crafty/wiki"
-    "+"
-    (uri-encode-string query)))
+;(define-cmd (unity query . opts)
+;  "unity reference"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:docs-jp.unity3d.com/Documentation/"
+;    "+"
+;    (uri-encode-string query)))
+;(define-cmd (boo query . opts)
+;  "boo wiki"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:github.com/bamboo/boo/wiki"
+;    "+"
+;    (uri-encode-string query)))
+;(define-cmd (crafty query . opts)
+;  "crafty api"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:craftyjs.com/api/"
+;    "+"
+;    (uri-encode-string query)))
+;(define-cmd (craftyjs query . opts)
+;  "crafty source"
+;  (string-append
+;    ;"http://www.google.com/search?nfpr=1&q="
+;    ;"site:github.com/craftyjs/Crafty/tree/develop/src"
+;    ;"site:raw.githubusercontent.com/craftyjs/Crafty/"
+;    ;"+"
+;    "https://github.com/craftyjs/Crafty/search?utf8=%E2%9C%93&q="
+;    (uri-encode-string query)))
+;(define-cmd (craftyw query . opts)
+;  "crafty wiki"
+;  (string-append
+;    "http://www.google.com/search?nfpr=1&q="
+;    "site:github.com/craftyjs/Crafty/wiki"
+;    "+"
+;    (uri-encode-string query)))
 (define-cmd (pixi query . opts)
   "pixi api"
   (string-append
