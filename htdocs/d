@@ -613,7 +613,7 @@
     "http://thesaurus.com/browse/"
     (uri-encode-string query)
     ""))
-(define-cmd (t query . opts)
+(define-cmd (rr query . opts)
   "連想類語辞典"
   (string-append
     "https://renso-ruigo.com/word/"
