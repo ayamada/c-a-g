@@ -777,7 +777,8 @@
 ;    (uri-encode-string query)))
 (define-cmd (cljs query . opts)
   "clojurescript api"
-  "http://cljs.info/cheatsheet/")
+  ;"http://cljs.info/cheatsheet/"
+  "https://cljs.github.io/api/")
 (define-cmd (jman query . opts)
   "jman"
   (string-append
@@ -840,7 +841,8 @@
     "http://www.google.com/search?nfpr=1&q=site:"
     ;"www.goodboydigital.com/pixijs/docs/" ; v2
     ;"pixijs.github.io/docs/" ; v3
-    "pixijs.download/release/docs/" ; v4
+    ;"pixijs.download/release/docs/" ; v4
+    "pixijs.download/dev/docs/" ; v5
     "+"
     (uri-encode-string query)))
 (define-cmd (sketchup query . opts)
