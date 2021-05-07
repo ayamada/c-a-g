@@ -288,7 +288,7 @@
 (define (amazon-long-url? url)
   (and-let* [(_ (#/www\.amazon\.co\.jp/ url))
              (m (#/\/([0-9a-zA-Z]{10})(?:$|\/|\?)/ url))]
-    (string-append "http://www.amazon.co.jp/dp/" (m 1))))
+    (string-append "https://www.amazon.co.jp/dp/" (m 1))))
 
 (define (rewrite-uri url)
   (cond
@@ -639,7 +639,7 @@
 (define-cmd (a query . opts)
   "amazon.co.jp"
   (string-append
-    "http://www.amazon.co.jp/s/?__mk_ja_JP="
+    "https://www.amazon.co.jp/s/?__mk_ja_JP="
     (uri-encode-string "カタカナ")
     "&url=search-alias%3Daps&field-keywords="
     (uri-encode-string query)))
