@@ -411,7 +411,7 @@
            )
       ;; どれにもマッチしなかった。google検索する
       (append-params-to-url
-        "http://www.google.com/search"
+        "https://www.google.com/search"
         `(("nfpr" "1")
           ("q" ,query-wo-nl/trimmed)))))
 
@@ -610,7 +610,7 @@
 (define-cmd (t query . opts)
   "thesaurus.com"
   (string-append
-    "http://thesaurus.com/browse/"
+    "https://thesaurus.com/browse/"
     (uri-encode-string query)
     ""))
 (define-cmd (rr query . opts)
@@ -619,22 +619,16 @@
     "https://renso-ruigo.com/word/"
     (uri-encode-string query)
     ""))
-(define-cmd (codic query . opts)
-  "codic.jp"
-  (string-append
-    "http://codic.jp/search?q="
-    (uri-encode-string query)
-    ""))
 (define-cmd (e query . opts)
   "英辞郎"
   (string-append
-    "http://eow.alc.co.jp/"
+    "https://eow.alc.co.jp/"
     (uri-encode-string query)
     "/UTF-8/"))
 (define-cmd (w query . opts)
   "ja.wikipedia.org"
   (string-append
-    "http://ja.wikipedia.org/wiki/"
+    "https://ja.wikipedia.org/wiki/"
     (uri-encode-string query)))
 (define-cmd (a query . opts)
   "amazon.co.jp"
@@ -678,52 +672,23 @@
 (define-cmd (gj query . opts)
   "google.co.jp"
   (string-append
-    "http://www.google.co.jp/search?lr=lang_ja&q="
+    "https://www.google.co.jp/search?lr=lang_ja&q="
     (uri-encode-string query)))
 (define-cmd (wa query . opts)
   "wolfram alpha"
   (string-append
-    "http://www.wolframalpha.com/input/?i="
+    "https://www.wolframalpha.com/input/?i="
     (uri-encode-string query)))
 (define-cmd (gi query . opts)
   "google画像検索"
   (string-append
-    "http://www.google.com/search?lr=lang_ja&tbm=isch&q="
+    "https://www.google.com/search?lr=lang_ja&tbm=isch&q="
     (uri-encode-string query)))
 (define-cmd (gt query . opts)
   "google翻訳"
   (string-append
-    "http://translate.google.co.jp/#auto/ja/"
+    "https://translate.google.co.jp/#auto/ja/"
     (uri-encode-string query)))
-;(define-cmd (ha query . opts)
-;  "Hayoo!"
-;  (string-append
-;    "http://holumbus.fh-wedel.de/hayoo/hayoo.html?query="
-;    (uri-encode-string query)))
-;(define-cmd (ho query . opts)
-;  "Hoogle"
-;  (string-append
-;    "http://www.haskell.org/hoogle/?hoogle="
-;    (uri-encode-string query)))
-(define-cmd (tr query . opts)
-  "twitter-rss"
-  (values
-    (string-append
-      ;"http://www.twitter-rss.com/user_timeline.php?screen_name="
-      ;"http://www.rssitfor.me/getrss?name="
-      ;"http://pipes.yahoo.com/pipes/pipe.run?_id=fe17aeb532da1aeb9dc5c0701746a6ac&_render=rss&c=1&l=ja&s=new&u="
-      ;(uri-encode-string query)
-      ;"https://queryfeed.net/"
-      "https://queryfeed.net/tw?q="
-      (uri-encode-string query))
-    'text))
-;(define-cmd (gdx query . opts)
-;  "libgdx api"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:libgdx.badlogicgames.com/nightlies/docs/api/"
-;    "+"
-;    (uri-encode-string query)))
 (define *clojure-api-url* "http://clojure.github.com/clojure/")
 (define *clojure-api-table* #f)
 (define (get-clojure-api-url query)
@@ -760,34 +725,18 @@
                                (string-append *clojure-api-url* href)))))
         (set! *clojure-api-table* t))))
   (hash-table-get *clojure-api-table* (string-downcase query) #f))
-;(define-cmd (rdc query . opts)
-;  "逆引きclojure"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:rd.clojure-users.org/"
-;    "+"
-;    (uri-encode-string query)))
 (define-cmd (clj query . opts)
   "clojure api"
   (string-append
-    "http://clojuredocs.org/search?q="
+    "https://clojuredocs.org/search?q="
     (uri-encode-string query)))
-;(define-cmd (grimoire query . opts)
-;  "clojure api"
-;  "http://grimoire.arrdem.com/")
-;(define-cmd (cclj query . opts)
-;  "crossclj"
-;  (string-append
-;    "http://crossclj.info/search?q="
-;    (uri-encode-string query)))
 (define-cmd (cljs query . opts)
   "clojurescript api"
-  ;"http://cljs.info/cheatsheet/"
   "https://cljs.github.io/api/")
 (define-cmd (jman query . opts)
   "jman"
   (string-append
-    "http://linuxjm.sourceforge.jp/cgi-bin/man.cgi?"
+    "https://linuxjm.sourceforge.jp/cgi-bin/man.cgi?"
     "Pagename=" (uri-encode-string query) "&"
     "submit=Search%21&"
     "Sec1=on&"
@@ -803,47 +752,10 @@
   (string-append
     "https://clojars.org/search?q="
     (uri-encode-string query)))
-;(define-cmd (unity query . opts)
-;  "unity reference"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:docs-jp.unity3d.com/Documentation/"
-;    "+"
-;    (uri-encode-string query)))
-;(define-cmd (boo query . opts)
-;  "boo wiki"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:github.com/bamboo/boo/wiki"
-;    "+"
-;    (uri-encode-string query)))
-;(define-cmd (crafty query . opts)
-;  "crafty api"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:craftyjs.com/api/"
-;    "+"
-;    (uri-encode-string query)))
-;(define-cmd (craftyjs query . opts)
-;  "crafty source"
-;  (string-append
-;    ;"http://www.google.com/search?nfpr=1&q="
-;    ;"site:github.com/craftyjs/Crafty/tree/develop/src"
-;    ;"site:raw.githubusercontent.com/craftyjs/Crafty/"
-;    ;"+"
-;    "https://github.com/craftyjs/Crafty/search?utf8=%E2%9C%93&q="
-;    (uri-encode-string query)))
-;(define-cmd (craftyw query . opts)
-;  "crafty wiki"
-;  (string-append
-;    "http://www.google.com/search?nfpr=1&q="
-;    "site:github.com/craftyjs/Crafty/wiki"
-;    "+"
-;    (uri-encode-string query)))
 (define-cmd (pixi query . opts)
   "pixi api"
   (string-append
-    "http://www.google.com/search?nfpr=1&q=site:"
+    "https://www.google.com/search?nfpr=1&q=site:"
     ;"www.goodboydigital.com/pixijs/docs/" ; v2
     ;"pixijs.github.io/docs/" ; v3
     ;"pixijs.download/release/docs/" ; v4
