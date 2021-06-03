@@ -509,8 +509,9 @@
     (completion-uri
       path
       (cgi-get-metavariable "SERVER_NAME")
-      (cgi-get-metavariable "SERVER_PORT")
-      (cgi-get-metavariable "HTTPS"))
+      443 ; (cgi-get-metavariable "SERVER_PORT")
+      "https" ; (cgi-get-metavariable "HTTPS")
+      )
     path))
 
 (define (self-url)
