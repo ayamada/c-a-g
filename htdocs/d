@@ -690,6 +690,11 @@
   (string-append
     "https://translate.google.co.jp/#auto/ja/"
     (uri-encode-string query)))
+(define-cmd (deepl query . opts)
+  "DeepL翻訳(en→ja)"
+  (string-append
+    "https://www.deepl.com/ja/translator#en/ja/"
+    (uri-encode-string query)))
 (define *clojure-api-url* "http://clojure.github.com/clojure/")
 (define *clojure-api-table* #f)
 (define (get-clojure-api-url query)
