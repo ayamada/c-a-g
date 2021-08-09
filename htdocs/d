@@ -739,6 +739,9 @@
 (define-cmd (cljs query . opts)
   "clojurescript api"
   "https://cljs.github.io/api/")
+(define-cmd (n query . opts)
+  "store.nissin.com"
+  "https://store.nissin.com/jp/products/outlet/")
 (define-cmd (jman query . opts)
   "jman"
   (string-append
