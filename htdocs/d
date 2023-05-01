@@ -32,6 +32,9 @@
                                     *cmd-desc-table*))
        )))
 
+(define style
+  (html:style "body { background-color:black; color:white; } a { color: #7F7FFF}"))
+
 (define (main args)
   (set! (port-buffering (current-error-port)) :line)
   (cgi-main
@@ -64,6 +67,7 @@
     (html:html
       (html:head
         (html:title "C-A-G")
+        style
         )
       (html:body
         (html:div (html:a :href (self-url) "戻る"))
@@ -99,6 +103,7 @@
       (html:html
         (html:head
           (html:title "C-A-G")
+          style
           ;(html:script :src "/chaton/prototype.js" :type "text/javascript")
           )
         (html:body :id "the-body"
@@ -623,9 +628,8 @@
 (define-cmd (e query . opts)
   "英辞郎"
   (string-append
-    "https://eow.alc.co.jp/"
-    (uri-encode-string query)
-    "/UTF-8/"))
+    "https://eow.alc.co.jp/search?q="
+    (uri-encode-string query)))
 (define-cmd (w query . opts)
   "ja.wikipedia.org"
   (string-append
